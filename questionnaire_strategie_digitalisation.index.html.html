@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire - Diagnostic Stratégique & Digitalisation</title>
+    <style>
+        :root {
+            --primary: #1a5276;
+            --primary-light: #2980b9;
+            --secondary: #117a65;
+            --accent: #f39c12;
+            --danger: #c0392b;
+            --success: #27ae60;
+            --bg: #f4f6f8;
+            --card: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #dce1e6;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+
+        .progress-wrapper {
+            background: var(--card);
+            padding: 20px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: var(--border);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary-light));
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 5px;
+        }
+
+        .section {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .section.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 20px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header .icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .section-body { padding: 25px; }
+
+        .question {
+            margin-bottom: 28px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .question:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .question-label {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 14px;
+            display: block;
+            color: var(--text);
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .conditional-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fafbfc;
+        }
+
+        .option:hover {
+            border-color: var(--primary-light);
+            background: #f0f7ff;
+        }
+
+        .option input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-light);
+            border-radius: 50%;
+            margin-right: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .option input[type="radio"]:checked {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .option input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option:has(input:checked) {
+            border-color: var(--primary);
+            background: #eaf2f8;
+            font-weight: 500;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(26, 82, 118, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 82, 118, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #c8cdd2;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #2ecc71);
+            color: white;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .results {
+            display: none;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 35px;
+            text-align: center;
+        }
+
+        .results.active { display: block; animation: fadeIn 0.5s ease; }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .score-value {
+            font-size: 2.8rem;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .score-low { background: linear-gradient(135deg, var(--danger), #e74c3c); }
+        .score-medium { background: linear-gradient(135deg, var(--accent), #f1c40f); }
+        .score-high { background: linear-gradient(135deg, var(--success), #2ecc71); }
+
+        .results h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .results p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto 25px;
+        }
+
+        .recommendations {
+            text-align: left;
+            margin-top: 25px;
+        }
+
+        .rec-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary);
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .rec-card h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .rec-card p, .rec-card ul {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .rec-card ul {
+            margin-left: 18px;
+            margin-top: 6px;
+        }
+
+        .rec-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* ===== PILIER SCORE CARDS ===== */
+        .piliers-dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            margin: 25px 0;
+        }
+
+        .pilier-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease;
+        }
+
+        .pilier-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .pilier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .pilier-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pilier-score-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .pilier-level {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 12px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .level-initiateur { background: #c0392b; }
+        .level-emergent { background: #e67e22; }
+        .level-intermediaire { background: #f39c12; }
+        .level-avance { background: #2980b9; }
+        .level-leader { background: #27ae60; }
+
+        .pilier-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .pilier-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.8s ease;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .pilier-bar-fill.low { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+        .pilier-bar-fill.medium-low { background: linear-gradient(90deg, #e67e22, #f39c12); }
+        .pilier-bar-fill.medium { background: linear-gradient(90deg, #f39c12, #f1c40f); }
+        .pilier-bar-fill.high { background: linear-gradient(90deg, #2980b9, #3498db); }
+        .pilier-bar-fill.very-high { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+
+        .pilier-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .global-summary {
+            background: linear-gradient(135deg, #f8f9fa, #eef2f7);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .global-summary h3 {
+            color: var(--primary);
+            font-size: 1.15rem;
+            margin-bottom: 12px;
+        }
+
+        .radar-placeholder {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .mini-pill {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.3rem; }
+            .section-body { padding: 18px; }
+            .btn { padding: 12px 20px; font-size: 0.95rem; }
+            .score-circle { width: 130px; height: 130px; }
+            .score-value { font-size: 2.2rem; }
+        }
+
+        @media print {
+            .progress-wrapper, .nav-buttons { display: none !important; }
+            .section { display: block !important; page-break-inside: avoid; }
+            .results { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>🎯 Diagnostic Stratégique & Digitalisation</h1>
+        <p>Évaluez la maturité stratégique et digitale de votre entreprise à travers ce questionnaire adaptatif. Les questions se personnalisent selon vos réponses pour un diagnostic sur mesure.</p>
+        <div class="badge">Durée estimée : 10-15 min &nbsp;|&nbsp; Questions conditionnelles</div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-wrapper">
+        <div class="progress-info">
+            <span id="progressText">Section 1 sur 9</span>
+            <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 1 : IDENTITE ==================== -->
+    <div class="section active" data-section="1">
+        <div class="section-header">
+            <div class="icon">🏢</div>
+            <span>1. Identité & Contexte de l'Entreprise</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">1</span>Quelle est la taille de votre entreprise ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q1" value="1"> Moins de 10 employés (TPE)</label>
+                    <label class="option"><input type="radio" name="q1" value="2"> 10 à 50 employés (Petite entreprise)</label>
+                    <label class="option"><input type="radio" name="q1" value="3"> 51 à 250 employés (PME)</label>
+                    <label class="option"><input type="radio" name="q1" value="4"> Plus de 250 employés (Grande entreprise)</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">2</span>Dans quel secteur d'activité évoluez-vous ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q2" value="1"> Industrie & Manufacturing</label>
+                    <label class="option"><input type="radio" name="q2" value="2"> Commerce & Distribution</label>
+                    <label class="option"><input type="radio" name="q2" value="3"> Services & Conseil</label>
+                    <label class="option"><input type="radio" name="q2" value="4"> Technologies & IT</label>
+                    <label class="option"><input type="radio" name="q2" value="5"> Tourisme & Hôtellerie</label>
+                    <label class="option"><input type="radio" name="q2" value="6"> Agriculture & Agroalimentaire</label>
+                    <label class="option"><input type="radio" name="q2" value="7"> Santé & Pharmaceutique</label>
+                    <label class="option"><input type="radio" name="q2" value="8"> BTP & Immobilier</label>
+                    <label class="option"><input type="radio" name="q2" value="9"> Finance & Assurance</label>
+                    <label class="option"><input type="radio" name="q2" value="10"> Autre</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">3</span>Depuis combien d'années votre entreprise existe-t-elle ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q3" value="1"> Moins de 2 ans (Startup)</label>
+                    <label class="option"><input type="radio" name="q3" value="2"> 2 à 5 ans</label>
+                    <label class="option"><input type="radio" name="q3" value="3"> 6 à 15 ans</label>
+                    <label class="option"><input type="radio" name="q3" value="4"> Plus de 15 ans</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">4</span>Quel est votre principal marché ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q4" value="1"> Local / Régional uniquement</label>
+                    <label class="option"><input type="radio" name="q4" value="2"> National</label>
+                    <label class="option"><input type="radio" name="q4" value="3"> Régional (Afrique du Nord / Moyen-Orient)</label>
+                    <label class="option"><input type="radio" name="q4" value="4"> International / Global</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">5</span>Votre entreprise dispose-t-elle d'un site web ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q5" value="1"> Non, pas de site web</label>
+                    <label class="option"><input type="radio" name="q5" value="2"> Oui, un site vitrine simple</label>
+                    <label class="option"><input type="radio" name="q5" value="3"> Oui, un site avec e-commerce ou fonctionnalités avancées</label>
+                    <label class="option"><input type="radio" name="q5" value="4"> Oui, une plateforme digitale complète intégrée</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q5 = 1 (pas de site web) -->
+            <div class="question conditional" data-show-if="q5" data-show-values="1" style="display:none;">
+                <label class="question-label"><span class="question-number">5a</span><span class="conditional-badge">Conditionnel</span> Quels sont les principaux freins à la création d'un site web ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q5a" value="1"> Manque de budget / ressources</label>
+                    <label class="option"><input type="radio" name="q5a" value="2"> Manque de compétences techniques en interne</label>
+                    <label class="option"><input type="radio" name="q5a" value="3"> Ne voit pas l'utilité pour mon activité</label>
+                    <label class="option"><input type="radio" name="q5a" value="4"> Projet en cours mais pas encore finalisé</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q5 >= 3 (site avancé) -->
+            <div class="question conditional" data-show-if="q5" data-show-values="3,4" style="display:none;">
+                <label class="question-label"><span class="question-number">5b</span><span class="conditional-badge">Conditionnel</span> Votre site web est-il optimisé pour le référencement (SEO) et l'expérience mobile ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q5b" value="1"> Non, pas d'optimisation particulière</label>
+                    <label class="option"><input type="radio" name="q5b" value="2"> Quelques optimisations de base</label>
+                    <label class="option"><input type="radio" name="q5b" value="3"> SEO technique et mobile-first en place</label>
+                    <label class="option"><input type="radio" name="q5b" value="4"> Stratégie SEO avancée avec suivi des performances</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <div></div>
+            <button class="btn btn-primary" onclick="nextSection()">Suivant →</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 2 : GOUVERNANCE ==================== -->
+    <div class="section" data-section="2">
+        <div class="section-header">
+            <div class="icon">⚖️</div>
+            <span>2. Gouvernance & Leadership Stratégique</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">6</span>Votre entreprise dispose-t-elle d'un plan stratégique formalisé ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q6" value="1"> Non, pas de plan stratégique</label>
+                    <label class="option"><input type="radio" name="q6" value="2"> Oui, informel ou mental</label>
+                    <label class="option"><input type="radio" name="q6" value="3"> Oui, documenté mais peu suivi</label>
+                    <label class="option"><input type="radio" name="q6" value="4"> Oui, documenté, suivi et révisé régulièrement</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">7</span>La direction est-elle impliquée dans la transformation digitale ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q7" value="1"> Pas d'implication de la direction</label>
+                    <label class="option"><input type="radio" name="q7" value="2"> Implication occasionnelle</label>
+                    <label class="option"><input type="radio" name="q7" value="3"> Implication active avec un sponsor désigné</label>
+                    <label class="option"><input type="radio" name="q7" value="4"> La direction pilote activement la transformation digitale</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">8</span>Disposez-vous d'un organigramme clair avec des fiches de poste définies ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q8" value="1"> Non, pas d'organigramme formel</label>
+                    <label class="option"><input type="radio" name="q8" value="2"> Organigramme existant mais non à jour</label>
+                    <label class="option"><input type="radio" name="q8" value="3"> Organigramme à jour avec fiches de poste basiques</label>
+                    <label class="option"><input type="radio" name="q8" value="4"> Organigramme à jour, fiches de poste détaillées et revues régulièrement</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">9</span>Comment sont prises les décisions stratégiques dans votre entreprise ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q9" value="1"> Uniquement par le dirigeant / fondateur</label>
+                    <label class="option"><input type="radio" name="q9" value="2"> Par le dirigeant avec avis informels</label>
+                    <label class="option"><input type="radio" name="q9" value="3"> En comité de direction avec analyse préalable</label>
+                    <label class="option"><input type="radio" name="q9" value="4"> Processus structuré avec data-driven decision making</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">10</span>Votre entreprise effectue-t-elle un benchmarking concurrentiel régulier ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q10" value="1"> Jamais</label>
+                    <label class="option"><input type="radio" name="q10" value="2"> Occasionnellement, sans méthode formalisée</label>
+                    <label class="option"><input type="radio" name="q10" value="3"> Régulièrement avec une méthodologie définie</label>
+                    <label class="option"><input type="radio" name="q10" value="4"> Systématiquement, intégré dans le processus stratégique</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q1 <= 2 (TPE / petite entreprise) -->
+            <div class="question conditional" data-show-if="q1" data-show-values="1,2" style="display:none;">
+                <label class="question-label"><span class="question-number">10a</span><span class="conditional-badge">Conditionnel</span> En tant que TPE / petite entreprise, disposez-vous d'un accompagnement extérieur (cabinet, consultant, réseau) pour la stratégie ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q10a" value="1"> Non, aucun accompagnement</label>
+                    <label class="option"><input type="radio" name="q10a" value="2"> Occasionnel, informel</label>
+                    <label class="option"><input type="radio" name="q10a" value="3"> Oui, un accompagnement régulier</label>
+                    <label class="option"><input type="radio" name="q10a" value="4"> Oui, un partenariat structuré avec un cabinet de conseil</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="prevSection()">← Précédent</button>
+            <button class="btn btn-primary" onclick="nextSection()">Suivant →</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 3 : STRATEGIE DIGITALE ==================== -->
+    <div class="section" data-section="3">
+        <div class="section-header">
+            <div class="icon">📡</div>
+            <span>3. Stratégie Digitale & Vision</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">11</span>Votre entreprise dispose-t-elle d'une stratégie digitale définie ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q11" value="1"> Non, aucune stratégie digitale</label>
+                    <label class="option"><input type="radio" name="q11" value="2"> Des initiatives ponctuelles sans vision globale</label>
+                    <label class="option"><input type="radio" name="q11" value="3"> Stratégie digitale définie mais peu opérationnalisée</label>
+                    <label class="option"><input type="radio" name="q11" value="4"> Stratégie digitale claire, alignée sur la stratégie d'entreprise et déployée</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">12</span>Comment évaluez-vous la présence digitale de votre entreprise ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q12" value="1"> Quasi inexistante</label>
+                    <label class="option"><input type="radio" name="q12" value="2"> Basique (site web simple, présence minimale)</label>
+                    <label class="option"><input type="radio" name="q12" value="3"> Développée (site, réseaux sociaux, SEO de base)</label>
+                    <label class="option"><input type="radio" name="q12" value="4"> Avancée (écosystème digital multicanal optimisé)</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">13</span>Votre entreprise utilise-t-elle le digital pour créer de nouveaux modèles d'affaires ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q13" value="1"> Non, le digital n'est qu'un support</label>
+                    <label class="option"><input type="radio" name="q13" value="2"> Réflexion en cours mais pas encore concrétisée</label>
+                    <label class="option"><input type="radio" name="q13" value="3"> Quelques expérimentations de nouveaux modèles</label>
+                    <label class="option"><input type="radio" name="q13" value="4"> Oui, le digital est au cœur de notre innovation de business model</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">14</span>Avez-vous défini des KPIs digitaux et des objectifs mesurables ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q14" value="1"> Non, aucun KPI digital</label>
+                    <label class="option"><input type="radio" name="q14" value="2"> Quelques indicateurs suivis de manière informelle</label>
+                    <label class="option"><input type="radio" name="q14" value="3"> KPIs définis et suivis régulièrement</label>
+                    <label class="option"><input type="radio" name="q14" value="4"> Tableau de bord digital complet avec revue périodique</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">15</span>Le digital est-il perçu comme un levier de compétitivité par votre direction ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q15" value="1"> Non, c'est une contrainte ou une dépense</label>
+                    <label class="option"><input type="radio" name="q15" value="2"> C'est utile mais pas prioritaire</label>
+                    <label class="option"><input type="radio" name="q15" value="3"> C'est un levier important parmi d'autres</label>
+                    <label class="option"><input type="radio" name="q15" value="4"> C'est un levier stratégique fondamental de différenciation</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q4 >= 3 (marché régional/international) -->
+            <div class="question conditional" data-show-if="q4" data-show-values="3,4" style="display:none;">
+                <label class="question-label"><span class="question-number">15a</span><span class="conditional-badge">Conditionnel</span> Votre stratégie digitale est-elle adaptée aux spécificités culturelles et linguistiques de vos marchés étrangers ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q15a" value="1"> Non, une seule version pour tous les marchés</label>
+                    <label class="option"><input type="radio" name="q15a" value="2"> Quelques adaptations ponctuelles</label>
+                    <label class="option"><input type="radio" name="q15a" value="3"> Stratégie multilingue avec contenu localisé</label>
+                    <label class="option"><input type="radio" name="q15a" value="4"> Approche glocale complète avec équipes locales et contenu adapté</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="prevSection()">← Précédent</button>
+            <button class="btn btn-primary" onclick="nextSection()">Suivant →</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 4 : INFRASTRUCTURE ==================== -->
+    <div class="section" data-section="4">
+        <div class="section-header">
+            <div class="icon">🖥️</div>
+            <span>4. Infrastructure Technologique & Outils Digitaux</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">16</span>Quel type d'infrastructure IT utilisez-vous principalement ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q16" value="1"> Aucune infrastructure formalisée</label>
+                    <label class="option"><input type="radio" name="q16" value="2"> Infrastructure on-premise traditionnelle</label>
+                    <label class="option"><input type="radio" name="q16" value="3"> Mix on-premise et cloud (hybride)</label>
+                    <label class="option"><input type="radio" name="q16" value="4"> Cloud-first avec infrastructure moderne</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q16 = 1 (pas d'infrastructure) -->
+            <div class="question conditional" data-show-if="q16" data-show-values="1" style="display:none;">
+                <label class="question-label"><span class="question-number">16a</span><span class="conditional-badge">Conditionnel</span> Quels sont vos besoins immédiats en matière d'infrastructure informatique ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q16a" value="1"> Des postes de travail basiques avec connexion Internet</label>
+                    <label class="option"><input type="radio" name="q16a" value="2"> Un réseau interne sécurisé et des sauvegardes</label>
+                    <label class="option"><input type="radio" name="q16a" value="3"> Des outils collaboratifs cloud et un serveur</label>
+                    <label class="option"><input type="radio" name="q16a" value="4"> Une infrastructure complète avec sécurité et supervision</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label"><span class="question-number">17</span>Votre entreprise utilise-t-elle un ERP (Enterprise Resource Planning) ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q17" value="1"> Non, gestion via Excel ou papier</label>
+                    <label class="option"><input type="radio" name="q17" value="2"> Logiciels séparés sans intégration</label>
+                    <label class="option"><input type="radio" name="q17" value="3"> ERP en place mais sous-utilisé</label>
+                    <label class="option"><input type="radio" name="q17" value="4"> ERP intégré et au cœur des processus</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q17 = 1 (pas d'ERP) -->
+            <div class="question conditional" data-show-if="q17" data-show-values="1" style="display:none;">
+                <label class="question-label"><span class="question-number">17a</span><span class="conditional-badge">Conditionnel</span> Quels outils utilisez-vous actuellement pour la gestion de votre entreprise ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q17a" value="1"> Documents papier et registres manuels</label>
+                    <label class="option"><input type="radio" name="q17a" value="2"> Excel / Google Sheets de base</label>
+                    <label class="option"><input type="radio" name="q17a" value="3"> Logiciels spécialisés séparés (compta, stock...)</label>
+                    <label class="option"><input type="radio" name="q17a" value="4"> Nous cherchons une solution intégrée</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label"><span class="question-number">18</span>Quels outils de collaboration utilisez-vous au quotidien ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q18" value="1"> Email et téléphone uniquement</label>
+                    <label class="option"><input type="radio" name="q18" value="2"> Quelques outils basiques (WhatsApp, Drive basique...)</label>
+                    <label class="option"><input type="radio" name="q18" value="3"> Suite collaborative (Teams, Slack, Google Workspace...)</label>
+                    <label class="option"><input type="radio" name="q18" value="4"> Écosystème collaboratif intégré avec workflows automatisés</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">19</span>Votre entreprise dispose-t-elle d'une stratégie de cybersécurité ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q19" value="1"> Non, aucune mesure de sécurité formalisée</label>
+                    <label class="option"><input type="radio" name="q19" value="2"> Antivirus et firewall de base</label>
+                    <label class="option"><input type="radio" name="q19" value="3"> Politique de sécurité définie et formation ponctuelle</label>
+                    <label class="option"><input type="radio" name="q19" value="4"> Stratégie de cybersécurité complète (ISO 27001, audits réguliers...)</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">20</span>Utilisez-vous des outils d'analyse de données (Business Intelligence) ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q20" value="1"> Non, aucun outil d'analyse</label>
+                    <label class="option"><input type="radio" name="q20" value="2"> Rapports manuels et tableaux Excel</label>
+                    <label class="option"><input type="radio" name="q20" value="3"> Outils de BI basiques (Tableau, Power BI occasionnel)</label>
+                    <label class="option"><input type="radio" name="q20" value="4"> Plateforme BI intégrée avec data warehouse et analytics avancés</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="prevSection()">← Précédent</button>
+            <button class="btn btn-primary" onclick="nextSection()">Suivant →</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 5 : PROCESSUS ==================== -->
+    <div class="section" data-section="5">
+        <div class="section-header">
+            <div class="icon">⚙️</div>
+            <span>5. Processus Opérationnels & Automatisation</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">21</span>Vos processus métier sont-ils documentés et formalisés ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q21" value="1"> Non, les processus sont informels</label>
+                    <label class="option"><input type="radio" name="q21" value="2"> Partiellement documentés</label>
+                    <label class="option"><input type="radio" name="q21" value="3"> Documentés et accessibles aux collaborateurs</label>
+                    <label class="option"><input type="radio" name="q21" value="4"> Documentés, optimisés et amélioration continue formalisée</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">22</span>Quel est le niveau d'automatisation de vos processus ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q22" value="1"> Tout est manuel</label>
+                    <label class="option"><input type="radio" name="q22" value="2"> Quelques tâches automatisées ponctuelles</label>
+                    <label class="option"><input type="radio" name="q22" value="3"> Automatisation significative des processus clés</label>
+                    <label class="option"><input type="radio" name="q22" value="4"> Automatisation avancée avec RPA, workflows et IA</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">23</span>Votre relation client est-elle digitale ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q23" value="1"> Relation 100% physique / téléphonique</label>
+                    <label class="option"><input type="radio" name="q23" value="2"> Quelques canaux digitaux (email, formulaire web)</label>
+                    <label class="option"><input type="radio" name="q23" value="3"> Multicanal avec CRM et suivi digital</label>
+                    <label class="option"><input type="radio" name="q23" value="4"> Expérience client omnicanale intégrée et personnalisée</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">24</span>Votre supply chain / chaîne logistique est-elle digitalisée ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q24" value="1"> Non applicable ou non digitalisée</label>
+                    <label class="option"><input type="radio" name="q24" value="2"> Suivi basique (Excel, emails)</label>
+                    <label class="option"><input type="radio" name="q24" value="3"> Outils de gestion logistique intégrés</label>
+                    <label class="option"><input type="radio" name="q24" value="4"> Supply chain 4.0 avec traçabilité, IoT et analytics prédictive</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">25</span>Disposez-vous d'un système de gestion documentaire numérique ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q25" value="1"> Documents papier ou stockés localement sans organisation</label>
+                    <label class="option"><input type="radio" name="q25" value="2"> Stockage cloud basique (Drive, Dropbox...)</label>
+                    <label class="option"><input type="radio" name="q25" value="3"> GED structurée avec droits d'accès</label>
+                    <label class="option"><input type="radio" name="q25" value="4"> GED avancée avec workflow de validation et archivage réglementaire</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q2 = 6 (Agriculture & Agroalimentaire) -->
+            <div class="question conditional" data-show-if="q2" data-show-values="6" style="display:none;">
+                <label class="question-label"><span class="question-number">25a</span><span class="conditional-badge">Conditionnel</span> Utilisez-vous des technologies agricoles digitales (agritech) : capteurs, drones, traçabilité, marketplace agricole ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q25a" value="1"> Non, agriculture traditionnelle</label>
+                    <label class="option"><input type="radio" name="q25a" value="2"> Quelques outils basiques (météo, marketplace...)</label>
+                    <label class="option"><input type="radio" name="q25a" value="3"> Capteurs ou drones pour la surveillance des cultures</label>
+                    <label class="option"><input type="radio" name="q25a" value="4"> Agritech avancée avec traçabilité complète et data-driven farming</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="prevSection()">← Précédent</button>
+            <button class="btn btn-primary" onclick="nextSection()">Suivant →</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 6 : MARKETING ==================== -->
+    <div class="section" data-section="6">
+        <div class="section-header">
+            <div class="icon">📢</div>
+            <span>6. Marketing Digital & Acquisition</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">26</span>Votre entreprise est-elle présente sur les réseaux sociaux ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q26" value="1"> Non, aucune présence</label>
+                    <label class="option"><input type="radio" name="q26" value="2"> Présence basique mais peu active</label>
+                    <label class="option"><input type="radio" name="q26" value="3"> Présence active sur plusieurs réseaux avec contenu régulier</label>
+                    <label class="option"><input type="radio" name="q26" value="4"> Stratégie social media avancée avec community management et pub digitale</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">27</span>Utilisez-vous le marketing digital pour acquérir de nouveaux clients ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q27" value="1"> Non, uniquement le bouche-à-oreille et réseau physique</label>
+                    <label class="option"><input type="radio" name="q27" value="2"> Occasionnellement, sans stratégie</label>
+                    <label class="option"><input type="radio" name="q27" value="3"> Campagnes régulières (SEO, SEA, emailing...)</label>
+                    <label class="option"><input type="radio" name="q27" value="4"> Stratégie d'acquisition digitale complète et optimisée (CRO, funnel...)</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">28</span>Avez-vous une stratégie de contenu (content marketing) ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q28" value="1"> Non, pas de stratégie de contenu</label>
+                    <label class="option"><input type="radio" name="q28" value="2"> Publications sporadiques sans calendrier</label>
+                    <label class="option"><input type="radio" name="q28" value="3"> Calendrier éditorial et contenu régulier</label>
+                    <label class="option"><input type="radio" name="q28" value="4"> Stratégie content marketing structurée avec persona et parcours client</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">29</span>Utilisez-vous un outil de CRM (Customer Relationship Management) ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q29" value="1"> Non, suivi client informel</label>
+                    <label class="option"><input type="radio" name="q29" value="2"> Outil basique (Excel, carnet d'adresses)</label>
+                    <label class="option"><input type="radio" name="q29" value="3"> CRM en place avec base de données structurée</label>
+                    <label class="option"><input type="radio" name="q29" value="4"> CRM avancé avec automation marketing, scoring et intégrations</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q29 = 1 (pas de CRM) -->
+            <div class="question conditional" data-show-if="q29" data-show-values="1" style="display:none;">
+                <label class="question-label"><span class="question-number">29a</span><span class="conditional-badge">Conditionnel</span> Comment gérez-vous actuellement vos contacts clients et vos opportunités commerciales ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q29a" value="1"> Mémoire et relations personnelles</label>
+                    <label class="option"><input type="radio" name="q29a" value="2"> Carnet d'adresses papier ou téléphone</label>
+                    <label class="option"><input type="radio" name="q29a" value="3"> Fichier Excel ou Google Sheets</label>
+                    <label class="option"><input type="radio" name="q29a" value="4"> Nous avons identifié le besoin d'un CRM</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label"><span class="question-number">30</span>Mesurez-vous le ROI de vos actions marketing digitales ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q30" value="1"> Non, impossible à évaluer</label>
+                    <label class="option"><input type="radio" name="q30" value="2"> Évaluation intuitive sans données précises</label>
+                    <label class="option"><input type="radio" name="q30" value="3"> Suivi de quelques indicateurs de performance</label>
+                    <label class="option"><input type="radio" name="q30" value="4"> Attribution complète et optimisation continue du ROI marketing</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q2 = 5 (Tourisme & Hôtellerie) -->
+            <div class="question conditional" data-show-if="q2" data-show-values="5" style="display:none;">
+                <label class="question-label"><span class="question-number">30a</span><span class="conditional-badge">Conditionnel</span> Utilisez-vous des plateformes de réservation en ligne (OTAs, moteurs de booking, channel manager) ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q30a" value="1"> Non, réservations uniquement par téléphone/email</label>
+                    <label class="option"><input type="radio" name="q30a" value="2"> Présence sur quelques OTAs sans gestion centralisée</label>
+                    <label class="option"><input type="radio" name="q30a" value="3"> Channel manager avec synchronisation des disponibilités</label>
+                    <label class="option"><input type="radio" name="q30a" value="4"> Stratégie de distribution digitale optimisée avec revenue management</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="prevSection()">← Précédent</button>
+            <button class="btn btn-primary" onclick="nextSection()">Suivant →</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 7 : RH ==================== -->
+    <div class="section" data-section="7">
+        <div class="section-header">
+            <div class="icon">👥</div>
+            <span>7. Ressources Humaines & Culture Digitale</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">31</span>Vos collaborateurs disposent-ils de compétences digitales suffisantes ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q31" value="1"> Compétences digitales faibles, résistance au changement</label>
+                    <label class="option"><input type="radio" name="q31" value="2"> Compétences hétérogènes, quelques utilisateurs avancés</label>
+                    <label class="option"><input type="radio" name="q31" value="3"> Bon niveau global avec formations régulières</label>
+                    <label class="option"><input type="radio" name="q31" value="4"> Culture digitale forte, auto-formation et veille technologique active</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">32</span>Votre entreprise propose-t-elle des formations au digital ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q32" value="1"> Non, aucune formation</label>
+                    <label class="option"><input type="radio" name="q32" value="2"> Formations ponctuelles sur demande</label>
+                    <label class="option"><input type="radio" name="q32" value="3"> Plan de formation annuel incluant le digital</label>
+                    <label class="option"><input type="radio" name="q32" value="4"> Académie interne, parcours de formation digitalisés et certifications</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">33</span>Disposez-vous de profils dédiés au digital (DSI, CDO, Community Manager...) ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q33" value="1"> Non, aucun profil dédié</label>
+                    <label class="option"><input type="radio" name="q33" value="2"> Un profil partiellement dédié (multitâches)</label>
+                    <label class="option"><input type="radio" name="q33" value="3"> Quelques profils dédiés selon les besoins</label>
+                    <label class="option"><input type="radio" name="q33" value="4"> Équipe digitale structurée avec rôles clairement définis</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">34</span>Le télétravail / travail hybride est-il mis en œuvre dans votre entreprise ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q34" value="1"> Non, présentiel obligatoire</label>
+                    <label class="option"><input type="radio" name="q34" value="2"> Exceptionnellement, sans cadre défini</label>
+                    <label class="option"><input type="radio" name="q34" value="3"> Régulièrement avec politique de télétravail</label>
+                    <label class="option"><input type="radio" name="q34" value="4"> Modèle hybride mature avec outils et culture adaptés</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">35</span>Comment qualifieriez-vous la culture d'innovation dans votre entreprise ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q35" value="1"> Culture conservative, aversion au risque</label>
+                    <label class="option"><input type="radio" name="q35" value="2"> Ouverte à l'innovation mais peu structurée</label>
+                    <label class="option"><input type="radio" name="q35" value="3"> Innovation encouragée avec processus d'idéation</label>
+                    <label class="option"><input type="radio" name="q35" value="4"> Culture d'innovation systémique avec budgets et labs dédiés</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q1 >= 3 (PME / grande entreprise) -->
+            <div class="question conditional" data-show-if="q1" data-show-values="3,4" style="display:none;">
+                <label class="question-label"><span class="question-number">35a</span><span class="conditional-badge">Conditionnel</span> Votre entreprise a-t-elle défini une feuille de route pour les compétences du futur (upskilling, reskilling) ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q35a" value="1"> Non, pas de plan de compétences anticipé</label>
+                    <label class="option"><input type="radio" name="q35a" value="2"> Identification informelle des besoins futurs</label>
+                    <label class="option"><input type="radio" name="q35a" value="3"> GPEC digitale avec plan de formation ciblé</label>
+                    <label class="option"><input type="radio" name="q35a" value="4"> Stratégie RH digitale complète avec upskilling systémique</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="prevSection()">← Précédent</button>
+            <button class="btn btn-primary" onclick="nextSection()">Suivant →</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 8 : FINANCES ==================== -->
+    <div class="section" data-section="8">
+        <div class="section-header">
+            <div class="icon">💰</div>
+            <span>8. Finances & Investissement Technologique</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">36</span>Quel est le budget alloué au digital / IT par rapport au CA ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q36" value="1"> Moins de 1% du CA</label>
+                    <label class="option"><input type="radio" name="q36" value="2"> 1% à 3% du CA</label>
+                    <label class="option"><input type="radio" name="q36" value="3"> 3% à 7% du CA</label>
+                    <label class="option"><input type="radio" name="q36" value="4"> Plus de 7% du CA</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">37</span>Vos investissements technologiques suivent-ils un plan pluriannuel ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q37" value="1"> Non, achats réactifs selon les besoins</label>
+                    <label class="option"><input type="radio" name="q37" value="2"> Quelques projets planifiés à l'année</label>
+                    <label class="option"><input type="radio" name="q37" value="3"> Plan d'investissement IT sur 2-3 ans</label>
+                    <label class="option"><input type="radio" name="q37" value="4"> Feuille de route technologique alignée sur la stratégie à long terme</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">38</span>Votre entreprise utilise-t-elle des solutions de financement digitale ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q38" value="1"> Non, paiements traditionnels uniquement</label>
+                    <label class="option"><input type="radio" name="q38" value="2"> Quelques solutions (virement, carte...)</label>
+                    <label class="option"><input type="radio" name="q38" value="3"> Paiement électronique, e-facturation intégrée</label>
+                    <label class="option"><input type="radio" name="q38" value="4"> Fintech, cash management digital, solutions de financement innovantes</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">39</span>La comptabilité et la gestion financière sont-elles digitalisées ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q39" value="1"> Comptabilité manuelle ou externalisée sans visibilité digitale</label>
+                    <label class="option"><input type="radio" name="q39" value="2"> Logiciel de comptabilité basique</label>
+                    <label class="option"><input type="radio" name="q39" value="3"> Comptabilité et gestion intégrées dans un ERP</label>
+                    <label class="option"><input type="radio" name="q39" value="4"> Finance digitale complète avec reporting temps réel et prévisions</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">40</span>Avez-vous déjà levé des fonds ou bénéficié de subventions pour la transformation digitale ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q40" value="1"> Non, autofinancement uniquement</label>
+                    <label class="option"><input type="radio" name="q40" value="2"> Nous avons étudié les dispositifs sans les utiliser</label>
+                    <label class="option"><input type="radio" name="q40" value="3"> Oui, nous avons bénéficié de subventions ou crédits bonifiés</label>
+                    <label class="option"><input type="radio" name="q40" value="4"> Oui, levée de fonds ou partenariats stratégiques pour accélérer le digital</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q3 = 1 (startup < 2 ans) -->
+            <div class="question conditional" data-show-if="q3" data-show-values="1" style="display:none;">
+                <label class="question-label"><span class="question-number">40a</span><span class="conditional-badge">Conditionnel</span> En tant que startup, avez-vous intégré la scalabilité technologique dès la conception de votre produit / service ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q40a" value="1"> Non, nous avons construit en mode artisanal</label>
+                    <label class="option"><input type="radio" name="q40a" value="2"> Nous y pensons mais ce n'est pas encore optimisé</label>
+                    <label class="option"><input type="radio" name="q40a" value="3"> Architecture pensée pour évoluer avec modularité</label>
+                    <label class="option"><input type="radio" name="q40a" value="4"> Oui, infrastructure cloud-native avec CI/CD et scalabilité automatique</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="prevSection()">← Précédent</button>
+            <button class="btn btn-primary" onclick="nextSection()">Suivant →</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECTION 9 : INNOVATION ==================== -->
+    <div class="section" data-section="9">
+        <div class="section-header">
+            <div class="icon">🚀</div>
+            <span>9. Innovation, Écosystème & Ouverture</span>
+        </div>
+        <div class="section-body">
+            <div class="question">
+                <label class="question-label"><span class="question-number">41</span>Votre entreprise collabore-t-elle avec des startups ou des écosystèmes d'innovation ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q41" value="1"> Non, fonctionnement en silo</label>
+                    <label class="option"><input type="radio" name="q41" value="2"> Quelques contacts ponctuels</label>
+                    <label class="option"><input type="radio" name="q41" value="3"> Partenariats actifs avec startups ou incubateurs</label>
+                    <label class="option"><input type="radio" name="q41" value="4"> Intégration dans un écosystème d'innovation avec open innovation</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">42</span>Utilisez-vous des technologies émergentes (IA, IoT, Blockchain, Big Data) ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q42" value="1"> Non, technologies traditionnelles uniquement</label>
+                    <label class="option"><input type="radio" name="q42" value="2"> Nous en avons entendu parler mais pas d'usage</label>
+                    <label class="option"><input type="radio" name="q42" value="3"> Expérimentation ou usage ponctuel de certaines technologies</label>
+                    <label class="option"><input type="radio" name="q42" value="4"> Intégration avancée dans nos produits ou processus</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">43</span>Vos produits / services sont-ils commercialisés en ligne ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q43" value="1"> Non, uniquement hors ligne</label>
+                    <label class="option"><input type="radio" name="q43" value="2"> Informations en ligne mais commande hors ligne</label>
+                    <label class="option"><input type="radio" name="q43" value="3"> E-commerce actif avec panier et paiement en ligne</label>
+                    <label class="option"><input type="radio" name="q43" value="4"> Modèle 100% digital ou omnicanal avancé</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q43 = 1 (pas de vente en ligne) -->
+            <div class="question conditional" data-show-if="q43" data-show-values="1" style="display:none;">
+                <label class="question-label"><span class="question-number">43a</span><span class="conditional-badge">Conditionnel</span> Quels freins empêchent la commercialisation en ligne de vos produits / services ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q43a" value="1"> La nature de mes produits ne se prête pas à la vente en ligne</label>
+                    <label class="option"><input type="radio" name="q43a" value="2"> Manque de compétences et de ressources</label>
+                    <label class="option"><input type="radio" name="q43a" value="3"> Crainte de la concurrence et des marges réduites</label>
+                    <label class="option"><input type="radio" name="q43a" value="4"> Nous réfléchissons à un lancement prochain</label>
+                </div>
+            </div>
+
+            <!-- CONDITIONNEL : Si Q43 >= 3 (e-commerce actif) -->
+            <div class="question conditional" data-show-if="q43" data-show-values="3,4" style="display:none;">
+                <label class="question-label"><span class="question-number">43b</span><span class="conditional-badge">Conditionnel</span> Quel est le chiffre d'affaires généré par vos canaux de vente en ligne ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q43b" value="1"> Moins de 10% du CA total</label>
+                    <label class="option"><input type="radio" name="q43b" value="2"> 10% à 30% du CA total</label>
+                    <label class="option"><input type="radio" name="q43b" value="3"> 30% à 60% du CA total</label>
+                    <label class="option"><input type="radio" name="q43b" value="4"> Plus de 60% du CA total</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <label class="question-label"><span class="question-number">44</span>Avez-vous une démarche RSE (Responsabilité Sociétale) intégrée à votre stratégie digitale ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q44" value="1"> Non, pas de démarche RSE</label>
+                    <label class="option"><input type="radio" name="q44" value="2"> Quelques actions isolées</label>
+                    <label class="option"><input type="radio" name="q44" value="3"> RSE définie avec actions concrètes</label>
+                    <label class="option"><input type="radio" name="q44" value="4"> RSE intégrée dans la stratégie avec reporting et green IT</label>
+                </div>
+            </div>
+            <div class="question">
+                <label class="question-label"><span class="question-number">45</span>Comment voyez-vous la place du digital dans l'avenir de votre entreprise ?</label>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q45" value="1"> Le digital n'est pas une priorité pour nous</label>
+                    <label class="option"><input type="radio" name="q45" value="2"> C'est un outil complémentaire à notre activité</label>
+                    <label class="option"><input type="radio" name="q45" value="3"> C'est un levier de croissance important</label>
+                    <label class="option"><input type="radio" name="q45" value="4"> C'est au cœur de notre vision et de notre différenciation future</label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="prevSection()">← Précédent</button>
+            <button class="btn btn-success" onclick="submitQuiz()">✓ Voir mes résultats</button>
+        </div>
+    </div>
+
+    <!-- ==================== RESULTS ==================== -->
+    <div class="results" id="results">
+        <div class="score-circle" id="scoreCircle">
+            <div class="score-value" id="scoreValue">0%</div>
+            <div class="score-label">Maturité Globale</div>
+        </div>
+        <h2 id="resultTitle">Diagnostic Stratégique & Digital</h2>
+        <p id="resultDesc">Voici l'analyse de la maturité de votre entreprise.</p>
+
+        <div class="recommendations" id="recommendations"></div>
+
+        <div class="nav-buttons" style="justify-content: center; margin-top: 30px;">
+            <button class="btn btn-primary" onclick="location.reload()">🔄 Recommencer le questionnaire</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimer / PDF</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let currentSection = 1;
+    const totalSections = 9;
+
+    // ========== CONDITIONAL LOGIC ==========
+    function evaluateConditionals() {
+        document.querySelectorAll('.conditional').forEach(el => {
+            const triggerName = el.dataset.showIf;
+            const allowedValues = el.dataset.showValues.split(',').map(v => v.trim());
+            const selected = document.querySelector('input[name="' + triggerName + '"]:checked');
+            if (selected && allowedValues.includes(selected.value)) {
+                el.style.display = 'block';
+            } else {
+                el.style.display = 'none';
+                // Uncheck any radios inside hidden conditional to avoid validating them
+                el.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            }
+        });
+    }
+
+    // Re-evaluate conditionals whenever any radio changes
+    document.addEventListener('change', function(e) {
+        if (e.target.type === 'radio') {
+            evaluateConditionals();
+            // Remove error styling
+            const q = e.target.closest('.question');
+            if (q) {
+                q.style.borderLeft = 'none';
+                q.style.paddingLeft = '0';
+            }
+        }
+    });
+
+    function updateProgress() {
+        const pct = Math.round(((currentSection - 1) / totalSections) * 100);
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('progressPercent').textContent = pct + '%';
+        document.getElementById('progressText').textContent = 'Section ' + currentSection + ' sur ' + totalSections;
+    }
+
+    function getVisibleQuestions(sectionEl) {
+        return Array.from(sectionEl.querySelectorAll('.question')).filter(q => {
+            return window.getComputedStyle(q).display !== 'none';
+        });
+    }
+
+    function validateCurrentSection() {
+        const section = document.querySelector('.section.active');
+        const questions = getVisibleQuestions(section);
+        let allAnswered = true;
+        let firstMissing = null;
+
+        questions.forEach(q => {
+            const radios = q.querySelectorAll('input[type="radio"]');
+            if (radios.length > 0) {
+                const answered = Array.from(radios).some(r => r.checked);
+                if (!answered) {
+                    allAnswered = false;
+                    q.style.borderLeft = '3px solid #c0392b';
+                    q.style.paddingLeft = '12px';
+                    if (!firstMissing) firstMissing = q;
+                } else {
+                    q.style.borderLeft = 'none';
+                    q.style.paddingLeft = '0';
+                }
+            }
+        });
+
+        if (!allAnswered && firstMissing) {
+            firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
+        }
+        return true;
+    }
+
+    function nextSection() {
+        if (!validateCurrentSection()) return;
+
+        document.querySelector('.section.active').classList.remove('active');
+        currentSection++;
+        document.querySelector('.section[data-section="' + currentSection + '"]').classList.add('active');
+        evaluateConditionals(); // ensure new section conditionals are correct
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function prevSection() {
+        document.querySelector('.section.active').classList.remove('active');
+        currentSection--;
+        document.querySelector('.section[data-section="' + currentSection + '"]').classList.add('active');
+        evaluateConditionals();
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function submitQuiz() {
+        if (!validateCurrentSection()) return;
+
+        // Collect all answers (including conditionals if visible)
+        const answers = {};
+        document.querySelectorAll('input[type="radio"]:checked').forEach(r => {
+            answers[r.name] = parseInt(r.value);
+        });
+
+        // Categories
+        const categories = {
+            'Gouvernance & Leadership': [6,7,8,9,10],
+            'Stratégie Digitale': [11,12,13,14,15],
+            'Infrastructure & Outils': [16,17,18,19,20],
+            'Processus & Opérations': [21,22,23,24,25],
+            'Marketing Digital': [26,27,28,29,30],
+            'RH & Culture Digitale': [31,32,33,34,35],
+            'Finances & Investissement': [36,37,38,39,40],
+            'Innovation & Écosystème': [41,42,43,44,45]
+        };
+
+        // Also include conditional questions in relevant categories
+        const conditionalMapping = {
+            'Infrastructure & Outils': ['q16a','q17a'],
+            'Processus & Opérations': ['q25a'],
+            'Marketing Digital': ['q29a','q30a'],
+            'Stratégie Digitale': ['q15a'],
+            'RH & Culture Digitale': ['q35a'],
+            'Finances & Investissement': ['q40a'],
+            'Innovation & Écosystème': ['q43a','q43b'],
+            'Gouvernance & Leadership': ['q10a']
+        };
+
+        let totalScore = 0;
+        let totalMax = 0;
+        const catScores = {};
+
+        for (const [cat, qs] of Object.entries(categories)) {
+            let catSum = 0;
+            let catCount = 0;
+            qs.forEach(q => {
+                if (answers['q' + q]) {
+                    catSum += answers['q' + q];
+                    catCount++;
+                }
+            });
+            // Add conditionals
+            if (conditionalMapping[cat]) {
+                conditionalMapping[cat].forEach(cq => {
+                    if (answers[cq]) {
+                        catSum += answers[cq];
+                        catCount++;
+                    }
+                });
+            }
+            const catMax = catCount * 4;
+            const catPct = catMax > 0 ? Math.round((catSum / catMax) * 100) : 0;
+            catScores[cat] = { score: catSum, max: catMax, pct: catPct };
+            totalScore += catSum;
+            totalMax += catMax;
+        }
+
+        const globalPct = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
+
+        // Display results
+        document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+        document.querySelector('.progress-wrapper').style.display = 'none';
+        document.getElementById('results').classList.add('active');
+
+        const circle = document.getElementById('scoreCircle');
+        const val = document.getElementById('scoreValue');
+        val.textContent = globalPct + '%';
+
+        circle.classList.remove('score-low', 'score-medium', 'score-high');
+        if (globalPct < 40) circle.classList.add('score-low');
+        else if (globalPct < 70) circle.classList.add('score-medium');
+        else circle.classList.add('score-high');
+
+        let title, desc;
+        if (globalPct < 30) {
+            title = 'Niveau Initiateur';
+            desc = 'Votre entreprise est au début de son parcours de transformation digitale. Des actions prioritaires sont nécessaires pour bâtir les fondations.';
+        } else if (globalPct < 50) {
+            title = 'Niveau Émergent';
+            desc = 'Quelques initiatives digitales sont en place, mais une stratégie globale et structurée reste à construire pour accélérer la transformation.';
+        } else if (globalPct < 70) {
+            title = 'Niveau Intermédiaire';
+            desc = 'Votre entreprise a une base digitale solide. L\'optimisation et l\'alignement stratégique permettront d\'atteindre l\'excellence.';
+        } else if (globalPct < 85) {
+            title = 'Niveau Avancé';
+            desc = 'Votre entreprise dispose d\'une maturité digitale élevée. L\'innovation continue et l\'exploitation des données seront vos prochains leviers.';
+        } else {
+            title = 'Niveau Leader Digital';
+            desc = 'Félicitations ! Votre entreprise fait partie des leaders de la transformation digitale. Maintenez votre avance par la veille et l\'innovation.';
+        }
+
+        document.getElementById('resultTitle').textContent = title;
+        document.getElementById('resultDesc').textContent = desc;
+
+        // Helper: level per pillar
+        function getPilierLevel(pct) {
+            if (pct < 30) return { label: 'Initiateur', cls: 'level-initiateur', barCls: 'low' };
+            if (pct < 50) return { label: 'Émergent', cls: 'level-emergent', barCls: 'medium-low' };
+            if (pct < 70) return { label: 'Intermédiaire', cls: 'level-intermediaire', barCls: 'medium' };
+            if (pct < 85) return { label: 'Avancé', cls: 'level-avance', barCls: 'high' };
+            return { label: 'Leader', cls: 'level-leader', barCls: 'very-high' };
+        }
+
+        const recContainer = document.getElementById('recommendations');
+
+        // Build dashboard
+        let dashboardHTML = '<div class="global-summary">';
+        dashboardHTML += '<h3>📊 Tableau de bord par Pilier</h3>';
+        dashboardHTML += '<p style="font-size:0.95rem; color:var(--text-light);">Sur <strong>8 piliers</strong> évalués — Score global : <strong>' + globalPct + '%</strong></p>';
+        dashboardHTML += '<div class="radar-placeholder">';
+
+        const sortedCats = Object.entries(catScores).sort((a, b) => a[1].pct - b[1].pct);
+        sortedCats.forEach(([cat, data]) => {
+            const lvl = getPilierLevel(data.pct);
+            dashboardHTML += '<span class="mini-pill ' + lvl.cls + '">' + cat.split(' ')[0] + ' ' + data.pct + '%</span>';
+        });
+        dashboardHTML += '</div></div>';
+
+        dashboardHTML += '<div class="piliers-dashboard">';
+        sortedCats.forEach(([cat, data]) => {
+            const lvl = getPilierLevel(data.pct);
+            dashboardHTML += `
+                <div class="pilier-card">
+                    <div class="pilier-header">
+                        <div class="pilier-name">${cat}</div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="pilier-level ${lvl.cls}">${lvl.label}</span>
+                            <span class="pilier-score-value">${data.pct}%</span>
+                        </div>
+                    </div>
+                    <div class="pilier-bar-bg">
+                        <div class="pilier-bar-fill ${lvl.barCls}" style="width:${data.pct}%"></div>
+                    </div>
+                    <div class="pilier-footer">
+                        <span>Score : ${data.score} / ${data.max}</span>
+                        <span>${data.pct >= 80 ? 'Excellence' : data.pct >= 60 ? 'À optimiser' : data.pct >= 40 ? 'À structurer' : 'Prioritaire'}</span>
+                    </div>
+                </div>
+            `;
+        });
+        dashboardHTML += '</div>';
+
+        // Recommendations
+        const recs = {
+            'Gouvernance & Leadership': [
+                'Formaliser un plan stratégique avec des objectifs SMART',
+                'Créer un comité de direction dédié à la transformation digitale',
+                'Mettre en place un processus décisionnel data-driven'
+            ],
+            'Stratégie Digitale': [
+                'Définir une feuille de route digitale sur 3 ans alignée sur la stratégie d\'entreprise',
+                'Établir un tableau de bord de KPIs digitaux',
+                'Envisager de nouveaux modèles d\'affaire autour du digital'
+            ],
+            'Infrastructure & Outils': [
+                'Auditer l\'infrastructure IT et planifier une migration cloud progressive',
+                'Mettre en place un ERP ou optimiser son usage',
+                'Renforcer la cybersécurité avec une politique formalisée'
+            ],
+            'Processus & Opérations': [
+                'Documenter et cartographier les processus métier clés',
+                'Identifier les processus à automatiser en priorité',
+                'Déployer un CRM et digitaliser la relation client'
+            ],
+            'Marketing Digital': [
+                'Développer une stratégie de présence sur les réseaux sociaux',
+                'Mettre en place une stratégie SEO/SEA et de content marketing',
+                'Automatiser le marketing et mesurer le ROI de chaque canal'
+            ],
+            'RH & Culture Digitale': [
+                'Évaluer les compétences digitales et établir un plan de formation',
+                'Recruter ou former des profils dédiés au digital',
+                'Développer une culture d\'innovation et de veille technologique'
+            ],
+            'Finances & Investissement': [
+                'Allouer un budget IT/digital dédié et suivre son ROI',
+                'Explorer les dispositifs de financement et subventions pour le digital',
+                'Digitaliser la comptabilité et la gestion financière'
+            ],
+            'Innovation & Écosystème': [
+                'S\'ouvrir à l\'écosystème startup et à l\'open innovation',
+                'Expérimenter les technologies émergentes (IA, IoT) sur des projets pilotes',
+                'Développer des produits ou services commercialisables en ligne'
+            ]
+        };
+
+        let recsHTML = '<h3 style="text-align:center; margin:30px 0 20px; color:var(--primary);">🎯 Recommandations par Pilier</h3>';
+
+        sortedCats.forEach(([cat, data]) => {
+            let color = '#27ae60';
+            if (data.pct < 40) color = '#c0392b';
+            else if (data.pct < 60) color = '#f39c12';
+            else if (data.pct < 80) color = '#2980b9';
+
+            let specificRecs = recs[cat].map(r => '<li>' + r + '</li>').join('');
+            if (data.pct >= 80) {
+                specificRecs = '<li><strong>Maintenir l\'excellence :</strong> veille technologique, innovation continue et partage de bonnes pratiques.</li>';
+            }
+
+            recsHTML += `
+                <div class="rec-card" style="border-left-color:${color};">
+                    <h4>${cat} — ${data.pct}%</h4>
+                    <p style="font-size:0.9rem; margin-bottom:8px;"><strong>Score :</strong> ${data.score} / ${data.max}</p>
+                    <ul>${specificRecs}</ul>
+                </div>
+            `;
+        });
+
+        recContainer.innerHTML = dashboardHTML + recsHTML;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Initial evaluation
+    evaluateConditionals();
+    updateProgress();
+</script>
+
+</body>
+</html>
